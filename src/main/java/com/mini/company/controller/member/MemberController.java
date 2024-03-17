@@ -1,7 +1,9 @@
 package com.mini.company.controller.member;
 
 import com.mini.company.domain.member.Member;
+import com.mini.company.domain.member.MemberRepository;
 import com.mini.company.dto.member.request.MemberCreateRequest;
+import com.mini.company.dto.member.response.MemberResponse;
 import com.mini.company.service.member.MemberService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +26,7 @@ public class MemberController {
     }
 
     @GetMapping("/members")
-    public List<Member> getMembers(){
+    public List<MemberResponse> getMembers(){
         return memberService.getMembers();
     }
 }

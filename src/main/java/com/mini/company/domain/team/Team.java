@@ -1,9 +1,6 @@
 package com.mini.company.domain.team;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -16,8 +13,9 @@ import lombok.RequiredArgsConstructor;
 public class Team {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id = null;
+    @Column(name = "team_id")
+    private Long teamId = null;
     @NonNull
     private String name;
-
+    private int annualRule;
 }

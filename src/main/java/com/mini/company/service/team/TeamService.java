@@ -2,6 +2,7 @@ package com.mini.company.service.team;
 
 import com.mini.company.domain.member.Member;
 import com.mini.company.domain.member.MemberRepository;
+import com.mini.company.domain.member.Role;
 import com.mini.company.domain.team.Team;
 import com.mini.company.domain.team.TeamRepository;
 import com.mini.company.dto.team.request.TeamCreateRequest;
@@ -30,19 +31,19 @@ public class TeamService {
 
     public List<TeamResponse> getTeams() {
         List<TeamResponse> teamResponses = new ArrayList<>();
-                List<Team> teams = teamRepository.findAll();
+        //전체 팀 조회
+        List<Team> teams = teamRepository.findAll();
         for (Team team : teams) {
             // findByTeamNameAndRole에서 반환된 Optional을 처리
-            Optional<Member> memberOptional = memberRepository.findByTeamNameAndRole(team.getName(), true);
+            Optional<Member> memberOptional = memberRepository.findByTeamTeamIdAndRole(team.getTeamId(), Role.MANAGER);
             // Optional이 값을 포함하고 있다면 값을 가져오고, 그렇지 않으면 "-"를 사용
-            String leadName = memberOptional.map(Member::getName).orElse("-");
+            String manager = memberOptional.map(Member::getName).orElse("-");
             teamResponses.add(
                     new TeamResponse(team.getName(),
-                            leadName,
-                            memberRepository.countByTeamName(team.getName()))
+                            manager,
+                            memberRepository.countByTeamTeamId(team.getTeamId()))
             );
         }
-
         return teamResponses;
     }
 }

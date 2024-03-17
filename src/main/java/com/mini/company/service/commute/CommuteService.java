@@ -5,7 +5,6 @@ import com.mini.company.domain.commute.CommuteRepository;
 import com.mini.company.domain.member.Member;
 import com.mini.company.domain.member.MemberRepository;
 import com.mini.company.dto.commute.request.CommuteGetRequest;
-import com.mini.company.dto.commute.response.CommuteDetail;
 import com.mini.company.dto.commute.response.CommuteListResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CommuteService {
@@ -27,34 +25,35 @@ public class CommuteService {
         this.memberRepository = memberRepository;
     }
 
+    //출근 저장
     @Transactional
     public void saveStart(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(IllegalAccessError::new);
-        Commute commute = commuteRepository.save(new Commute(memberId));
+        member.commute();
+        Commute commute = commuteRepository.save(new Commute(member));
         commute.updateDate();
         commute.updateStart();
     }
+    //퇴근 저장
     @Transactional
     public void saveEnd(Long memberId) {
-        Commute commute = commuteRepository.findByMemberIdAndDate(memberId, LocalDate.now())
+
+        Commute commute = commuteRepository.findByMember_MemberIdAndDate(memberId, LocalDate.now())
                 .orElseThrow(IllegalAccessError::new);
         commute.updateEnd();
         commute.updateWorkingMinutes();
     }
 
+    // 특정 지원의 특정 달 근무 리스트
+    @Transactional(readOnly = true)
     public CommuteListResponse getCommutesMember(CommuteGetRequest request) {
-        //List<CommuteDetail> commuteList = commuteRepository.findByIdAndDate(request.getMemberId(), request.getDate());
-        YearMonth yearMonth = YearMonth.from(request.getDate());
-        LocalDate startOfMonth = yearMonth.atDay(1);
-        LocalDate endOfMonth = yearMonth.atEndOfMonth();
+        LocalDate startOfMonth = request.getDate().atDay(1);
+        LocalDate endOfMonth = request.getDate().atEndOfMonth();
 
-        List<CommuteDetail> commuteList = commuteRepository.findByMemberIdAndDateBetween(
+        List<Commute> commuteList = commuteRepository.findByMemberIdAndDateBetween(
                 request.getMemberId(), startOfMonth, endOfMonth);
-        int sum = 0;
-        for (CommuteDetail commuteDetail : commuteList){
-            sum +=commuteDetail.getWorkingMinutes();
-        }
-        return new CommuteListResponse(commuteList, sum);
+
+        return new CommuteListResponse(commuteList);
     }
 }

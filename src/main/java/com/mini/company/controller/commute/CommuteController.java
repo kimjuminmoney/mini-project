@@ -34,9 +34,7 @@ public class CommuteController {
     }
 
     @GetMapping("/commutes/member")
-    public CommuteListResponse getCommutesMember(
-            @RequestParam Long memberId,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM") YearMonth date) {
-        return commuteService.getCommutesMember(new CommuteGetRequest(memberId,date.atDay(1)));
+    public CommuteListResponse getCommutesMember(CommuteGetRequest commuteGetRequest) {
+        return commuteService.getCommutesMember(commuteGetRequest);
     }
 }
