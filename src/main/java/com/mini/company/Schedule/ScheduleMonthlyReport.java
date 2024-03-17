@@ -29,7 +29,7 @@ public class ScheduleMonthlyReport {
     /**
      *  매월 1일 오전 9시에 스케쥴 시작
      */
-    @Scheduled(cron = " 0 9 1 * * ")
+    @Scheduled(cron = " * 0 9 1 * * ")
     //@Scheduled(fixedDelay = 30000)
     public void monthlyReport() throws IOException {
         List<String[]> stringsList = staringListProcess();

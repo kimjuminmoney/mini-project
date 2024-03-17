@@ -10,14 +10,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
-import java.util.List;
 
 @Service
 public class CommuteService {
 
-    private CommuteRepository commuteRepository;
-    private MemberRepository memberRepository;
+    private final CommuteRepository commuteRepository;
+    private final MemberRepository memberRepository;
 
 
     public CommuteService(CommuteRepository commuteRepository, MemberRepository memberRepository) {
@@ -35,6 +33,7 @@ public class CommuteService {
         commute.updateDate();
         commute.updateStart();
     }
+
     //퇴근 저장
     @Transactional
     public void saveEnd(Long memberId) {
@@ -46,14 +45,20 @@ public class CommuteService {
     }
 
     // 특정 지원의 특정 달 근무 리스트
+//    @Transactional(readOnly = true)
+//    public CommuteListResponse getCommutesMember(CommuteGetRequest request) {
+//        LocalDate startOfMonth = request.getDate().atDay(1);
+//        LocalDate endOfMonth = request.getDate().atEndOfMonth();
+//
+//        List<Commute> commuteList = commuteRepository.findByMemberIdAndDateBetween(
+//                request.getMemberId(), startOfMonth, endOfMonth);
+//
+//        return new CommuteListResponse(commuteList);
+//    }
+
     @Transactional(readOnly = true)
     public CommuteListResponse getCommutesMember(CommuteGetRequest request) {
-        LocalDate startOfMonth = request.getDate().atDay(1);
-        LocalDate endOfMonth = request.getDate().atEndOfMonth();
-
-        List<Commute> commuteList = commuteRepository.findByMemberIdAndDateBetween(
-                request.getMemberId(), startOfMonth, endOfMonth);
-
-        return new CommuteListResponse(commuteList);
+        Member member = memberRepository.findById(request.getMemberId()).orElseThrow(IllegalAccessError::new);
+        return new CommuteListResponse(member,request.getDate());
     }
 }

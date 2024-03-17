@@ -8,7 +8,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.ToString;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -19,7 +18,6 @@ import java.util.stream.Collectors;
 @Entity
 @Getter
 @NoArgsConstructor
-@ToString
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,10 +41,10 @@ public class Member {
     @JoinColumn(name = "team_Id")
     private Team team;
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<Annual> annualList;
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<Commute> commuteList = new ArrayList<>();
 
     public Member(MemberCreateRequest request, Team team) {
